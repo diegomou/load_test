@@ -5,12 +5,15 @@ traffic patterns. The test includes a custom load shape to ramp up and down the 
 over time, and it handles responses to identify successful requests and rate limiting.
 """
 
+import logging
 import os
 import random
 from typing import Any
 
 from locust import FastHttpUser, LoadTestShape, between, events, task
 from locust.env import Environment
+
+logger = logging.getLogger(__name__)
 
 SUCCESS_STATUS_CODE = 200
 RATE_LIMIT_STATUS_CODE = 429
@@ -105,7 +108,7 @@ def on_test_start(environment: Environment, **kwargs: dict[str, Any]) -> None:  
 
     """
     if environment.host:
-        print(f"🚀 Optimized test starting on {environment.host}")
+        logger.info("Optimized test starting on %s", environment.host)
 
 
 @events.test_stop.add_listener
@@ -117,4 +120,4 @@ def on_test_stop(environment: Environment, **kwargs: dict[str, Any]) -> None:  #
         **kwargs: Additional keyword arguments.
 
     """
-    print("📊 Load test complete")
+    logger.info("Load test complete")
