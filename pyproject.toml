@@ -22,11 +22,15 @@ select = [
     # Base error & import checks
     "E",  # pycodestyle errors
     "F",  # Pyflakes
+    "W",  # pycodestyle warnings
     "I",  # isort
+    "S",  # bandit
+    "D",  # docstring check
 
     # Strictness / correctness
     "B",      # flake8-bugbear
     "UP",     # pyupgrade
+    "ANN",    # type annotations
     "SIM",    # flake8-simplify
     "C4",     # flake8-comprehensions
     "RET",    # flake8-return
@@ -36,7 +40,11 @@ select = [
     "RUF",    # Ruff-specific rules
 ]
 
-ignore = []
+ignore = [
+    # Incompatible pydocstyle pairs: pick one style from each.
+    "D203", # prefer D211 (no blank line before class docstring)
+    "D213", # prefer D212 (multi-line summary on first line)
+]
 
 [tool.ruff.format]
 docstring-code-line-length = 120

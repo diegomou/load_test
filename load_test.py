@@ -1,5 +1,4 @@
-"""
-Script to perform a load test using Locust
+"""Script to perform a load test using Locust.
 
 It simulates multiple users accessing a specified URL with randomized headers to mimic real-world \
 traffic patterns. The test includes a custom load shape to ramp up and down the number of users \
@@ -8,14 +7,17 @@ over time, and it handles responses to identify successful requests and rate lim
 
 import os
 import random
+from typing import Any
 
-from locust import FastHttpUser, LoadTestShape, between, events, task
+from locust import Environment, FastHttpUser, LoadTestShape, between, events, task
 
 SUCCESS_STATUS_CODE = 200
 RATE_LIMIT_STATUS_CODE = 429
 
 
 class WebsiteUser(FastHttpUser):
+    """User class for the load test."""
+
     wait_time = between(1.0, 3.0)
     host = os.getenv("SITE_URL", "https://www.your_testing_url.com")
 
@@ -26,25 +28,26 @@ class WebsiteUser(FastHttpUser):
     )
 
     def _generate_fake_ip(self) -> str:
-        """
-        Generate a random fake IP address for the X-Forwarded-For header.
+        """Generate a random fake IP address for the X-Forwarded-For header.
 
         Returns:
             str: A randomly generated IP address in the format "X.X.X.X"
+
         """
-        return f"{random.randint(1, 254)}.{random.randint(1, 254)}.{random.randint(1, 254)}.{random.randint(1, 254)}"
+        return f"{random.randint(1, 254)}.{random.randint(1, 254)}.{random.randint(1, 254)}.{random.randint(1, 254)}"  # noqa: S311
 
     def _generate_random_user_agent(self) -> str:
-        """
-        Select a random User-Agent string from the predefined list.
+        """Generate a random User-Agent string from the predefined list.
 
         Returns:
             str: A randomly selected User-Agent string.
+
         """
-        return random.choice(self.user_agents)
+        return random.choice(self.user_agents)  # noqa: S311
 
     @task
-    def load_test_endpoint(self):
+    def load_test_endpoint(self) -> None:
+        """Load test the endpoint."""
         headers = {
             "User-Agent": self._generate_random_user_agent(),
             "X-Forwarded-For": self._generate_fake_ip(),
@@ -62,8 +65,11 @@ class WebsiteUser(FastHttpUser):
 
 
 class StressTestShape(LoadTestShape):
-    """
-    Load shape for the stress test - Ramping up and down the number of users over time.
+    """Load shape for the stress test - Ramping up and down the number of users over time.
+
+    Args:
+        LoadTestShape: LoadTestShape class from Locust.
+
     """
 
     stages = (
@@ -73,9 +79,13 @@ class StressTestShape(LoadTestShape):
         {"duration": 120, "users": 1000, "spawn_rate": 100},
     )
 
-    def tick(self):
-        """
-        Tick method for the load shape.
+    def tick(self) -> tuple[int, int] | None:
+        """Tick method for the load shape.
+
+        Returns:
+            tuple: A tuple containing the number of users and the spawn rate.
+            None: If the run time is greater than the duration of the last stage.
+
         """
         run_time = self.get_run_time()
         for stage in self.stages:
@@ -85,11 +95,25 @@ class StressTestShape(LoadTestShape):
 
 
 @events.test_start.add_listener
-def on_test_start(environment, **kwargs):  # noqa: ARG001
+def on_test_start(environment: Environment, **kwargs: dict[str, Any]) -> None:  # noqa: ARG001
+    """Event listener for the test start.
+
+    Args:
+        environment: The environment object.
+        **kwargs: Additional keyword arguments.
+
+    """
     if environment.host:
         print(f"🚀 Optimized test starting on {environment.host}")
 
 
 @events.test_stop.add_listener
-def on_test_stop(environment, **kwargs):  # noqa: ARG001
+def on_test_stop(environment: Environment, **kwargs: dict[str, Any]) -> None:  # noqa: ARG001
+    """Event listener for the test stop.
+
+    Args:
+        environment: The environment object.
+        **kwargs: Additional keyword arguments.
+
+    """
     print("📊 Load test complete")
