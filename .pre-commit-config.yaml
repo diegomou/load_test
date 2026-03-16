@@ -1,12 +1,19 @@
-# .pre-commit-config.yaml
 repos:
+  # 1. General Git Sanitation
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace      # Removes unnecessary spaces at end of lines
+      - id: end-of-file-fixer        # Ensures files end with a newline
+      - id: check-yaml               # Validates YAML syntax
+      - id: check-added-large-files  # Prevents accidentally committing massive files
+      - id: check-ast                # Checks if Python code actually compiles
+
+  # 2. High-Speed Linting & Formatting
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    # Ruff version
     rev: v0.9.0
     hooks:
-      # Run the linter
       - id: ruff
         args: [ --fix, --line-length=120 ]
-      # Run the formatter
       - id: ruff-format
         args: [ --line-length=120 ]
