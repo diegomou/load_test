@@ -9,4 +9,39 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = []
+dev = [
+    "ruff>=0.6.0",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = [
+    # Base error & import checks
+    "E",  # pycodestyle errors
+    "F",  # Pyflakes
+    "I",  # isort
+
+    # Strictness / correctness
+    "B",      # flake8-bugbear
+    "UP",     # pyupgrade
+    "SIM",    # flake8-simplify
+    "C4",     # flake8-comprehensions
+    "RET",    # flake8-return
+    "ARG",    # flake8-unused-arguments
+    "SLF",    # flake8-self
+    "PL",     # Pylint-ish checks
+    "RUF",    # Ruff-specific rules
+]
+
+ignore = []
+
+[tool.ruff.format]
+docstring-code-line-length = 120
+
+[dependency-groups]
+dev = [
+    "ruff>=0.15.6",
+]
