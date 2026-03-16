@@ -9,7 +9,8 @@ import os
 import random
 from typing import Any
 
-from locust import Environment, FastHttpUser, LoadTestShape, between, events, task
+from locust import FastHttpUser, LoadTestShape, between, events, task
+from locust.env import Environment
 
 SUCCESS_STATUS_CODE = 200
 RATE_LIMIT_STATUS_CODE = 429
